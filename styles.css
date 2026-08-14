@@ -1,0 +1,234 @@
+:root {
+  --bg-1: #edecdc;
+  --bg-2: #67c6bf;
+  --card: rgba(255, 255, 255, 0.78);
+  --card-border: rgba(103, 198, 191, 0.45);
+  --text: #1f2d2b;
+  --muted: #48615f;
+  --primary: #67c6bf;
+  --primary-dark: #42a7a1;
+  --secondary: #edecdc;
+  --success: #2c7a74;
+  --shadow: rgba(27, 63, 60, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  color: var(--text);
+}
+
+.app {
+  width: min(90vw, 700px);
+  padding: 24px;
+}
+
+.game-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 18px 40px var(--shadow);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.game-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.42);
+}
+
+.mode-switch {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 8px;
+}
+
+.mode-btn {
+  flex: 1;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 700;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  box-shadow: 0 8px 18px rgba(22, 30, 44, 0.2);
+}
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+.label {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 1.72rem;
+  color: var(--primary);
+}
+
+h1 {
+  margin: 0 0 24px;
+  font-size: clamp(2rem, 3vw, 3rem);
+  text-align: center;
+}
+
+.question-box,
+.answer-box,
+.object-box {
+  border-radius: 18px;
+  padding: 20px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: opacity 0.45s ease, transform 0.45s ease, max-height 0.45s ease, margin 0.35s ease, padding 0.35s ease;
+}
+
+.question-box {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  line-height: 1.5;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.answer-box {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(126, 240, 184, 0.08);
+  border-color: rgba(126, 240, 184, 0.25);
+  color: var(--success);
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 200px;
+}
+
+.answer-box span {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+#answerText,
+#objectText {
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+}
+
+.object-box {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.object-label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+  color: var(--primary-dark);
+}
+
+#objectText {
+  margin: 0;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.actions {
+  margin-top: 22px;
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 18px rgba(22, 30, 44, 0.25);
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 24px rgba(22, 30, 44, 0.28);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #ffffff;
+}
+
+.secondary {
+  background: linear-gradient(135deg, var(--secondary), #d7e5e3);
+  color: #163d3a;
+}
+
+@media (max-width: 480px) {
+  .game-card {
+    padding: 20px 16px;
+  }
+
+  .mode-switch {
+    flex-direction: column;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+}

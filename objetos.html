@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juego de Objetos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+    <style>
+      :root {
+        --bg-1: #edecdc;
+        --bg-2: #67c6bf;
+        --card: rgba(255, 255, 255, 0.85);
+        --card-border: rgba(103, 198, 191, 0.5);
+        --text: #1f2d2b;
+        --primary: #67c6bf;
+        --primary-dark: #42a7a1;
+        --secondary: #edecdc;
+        --shadow: rgba(27, 63, 60, 0.2);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+        color: var(--text);
+      }
+
+      .topbar {
+        width: min(90vw, 760px);
+        margin-top: 26px;
+      }
+
+      .top-nav {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 999px;
+        padding: 8px;
+        display: flex;
+        gap: 8px;
+        box-shadow: 0 10px 24px rgba(27, 63, 60, 0.12);
+      }
+
+      .nav-link {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        color: var(--text);
+        font-weight: 700;
+        padding: 12px 16px;
+        border-radius: 999px;
+        transition: all 0.2s ease;
+      }
+
+      .nav-link.active {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+      }
+
+      .app {
+        width: min(90vw, 760px);
+        padding: 20px;
+      }
+
+      .game-card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 22px;
+        padding: 28px 24px;
+        box-shadow: 0 18px 40px var(--shadow);
+      }
+
+      .label {
+        margin: 0 0 18px;
+        text-align: center;
+        font-size: 2rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--primary);
+      }
+
+      .object-box {
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 18px;
+        padding: 24px 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.35s ease, margin 0.35s ease, padding 0.35s ease;
+        overflow: hidden;
+      }
+
+      .object-label {
+        font-size: 0.82rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--primary-dark);
+        margin-bottom: 12px;
+      }
+
+      .material-symbols {
+        font-family: 'Material Symbols Outlined';
+        font-size: clamp(2.3rem, 5vw, 4.2rem);
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        display: block;
+        color: #111827;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(90px, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .option-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 18px;
+        min-height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #111827;
+      }
+
+      .option-btn .material-symbols {
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        color: #111827;
+      }
+
+      .option-btn:hover {
+        transform: translateY(-1px);
+        border-color: rgba(103, 198, 191, 0.5);
+      }
+
+      .actions {
+        margin-top: 22px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 14px 22px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+        transition: transform 0.18s ease;
+      }
+
+      button.secondary {
+        background: linear-gradient(135deg, var(--secondary), #d7e5e3);
+        color: #163d3a;
+      }
+
+      button:hover { transform: translateY(-1px); }
+      button:active { transform: translateY(0); }
+
+      .hidden {
+        opacity: 0;
+        visibility: hidden;
+        max-height: 0;
+        margin: 0;
+        padding: 0;
+        transform: scale(0.96);
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      @media (max-width: 480px) {
+        .top-nav { gap: 6px; }
+        .nav-link { padding: 10px 12px; font-size: 0.92rem; }
+        .options-grid { grid-template-columns: repeat(2, minmax(80px, 1fr)); }
+        button { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <nav class="top-nav" aria-label="Navegación principal">
+        <a class="nav-link" href="index.html">Preguntas</a>
+        <a class="nav-link active" href="objetos.html">Objetos</a>
+      </nav>
+    </header>
+
+    <main class="app">
+      <div class="game-card">
+        <h1 class="label">Objetos aleatorios</h1>
+
+        <div class="object-box" id="objectBox">
+          <span class="object-label">Icono a memorizar</span>
+          <span id="objectText" class="material-symbols" aria-live="polite">search</span>
+        </div>
+
+        <div class="options-grid hidden" id="optionsGrid" aria-live="polite"></div>
+
+        <div class="actions">
+          <button id="showObjectBtn">Visto</button>
+          <button id="generateObjectBtn" class="secondary">Generar nuevo</button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const objectText = document.getElementById('objectText');
+      const objectBox = document.getElementById('objectBox');
+      const optionsGrid = document.getElementById('optionsGrid');
+      const showObjectBtn = document.getElementById('showObjectBtn');
+      const generateObjectBtn = document.getElementById('generateObjectBtn');
+
+      const iconSet = [
+        'key', 'build', 'edit', 'watch', 'chair', 'desk', 'computer', 'mouse', 'headphones', 'tv',
+        'lightbulb', 'umbrella', 'wallet', 'camera', 'book', 'glasses', 'pencil', 'brush', 'gamepad',
+        'music_note', 'credit_card', 'smartphone', 'tablet', 'laptop', 'router', 'printer',
+        'battery_charging_full', 'home', 'bed', 'door_front', 'window', 'kitchen', 'coffee', 'cookie',
+        'cake', 'train', 'hail', 'sunny', 'cloud', 'water_drop', 'snowflake', 'pool', 'fitness_center',
+        'spa', 'face', 'favorite', 'pets', 'science', 'security', 'alarm', 'notifications', 'rocket_launch',
+        'map', 'travel', 'pin_drop', 'place', 'star', 'check_circle', 'cancel', 'bolt', 'tune',
+        'auto_awesome', 'thumb_up', 'thumb_down', 'hourglass_top', 'task_alt', 'flip_camera_android',
+        'mail', 'phone_iphone', 'settings', 'support_agent', 'sensors', 'bug_report', 'inventory_2',
+        'shopping_cart', 'local_shipping', 'flight_takeoff', 'radio_button_checked', 'verified', 'power'
+      ];
+
+      let currentIcon = '';
+      let lastIcon = '';
+
+      function pickRandomIcon() {
+        let nextIcon = iconSet[Math.floor(Math.random() * iconSet.length)];
+
+        if (iconSet.length > 1) {
+          while (nextIcon === lastIcon) {
+            nextIcon = iconSet[Math.floor(Math.random() * iconSet.length)];
+          }
+        }
+
+        lastIcon = nextIcon;
+        currentIcon = nextIcon;
+        objectText.textContent = currentIcon;
+      }
+
+      function shuffleArray(items) {
+        const clone = [...items];
+        for (let i = clone.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [clone[i], clone[j]] = [clone[j], clone[i]];
+        }
+        return clone;
+      }
+
+      function showOptions() {
+        const wrongOptions = shuffleArray(iconSet.filter(icon => icon !== currentIcon)).slice(0, 7);
+        const options = shuffleArray([currentIcon, ...wrongOptions]);
+
+        objectBox.classList.add('hidden');
+
+        setTimeout(() => {
+          optionsGrid.innerHTML = '';
+          options.forEach((icon) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'option-btn';
+            button.innerHTML = `<span class="material-symbols">${icon}</span>`;
+            button.addEventListener('click', () => {
+              const isCorrect = icon === currentIcon;
+              button.style.background = isCorrect ? 'rgba(76, 175, 80, 0.18)' : 'rgba(244, 67, 54, 0.14)';
+              button.style.borderColor = isCorrect ? 'rgba(76, 175, 80, 0.7)' : 'rgba(244, 67, 54, 0.6)';
+              setTimeout(() => {
+                objectText.textContent = currentIcon;
+                objectText.style.color = isCorrect ? '#2c7a74' : '#d32f2f';
+                objectText.classList.remove('hidden');
+                objectBox.classList.remove('hidden');
+              }, 180);
+            });
+            optionsGrid.appendChild(button);
+          });
+
+          optionsGrid.classList.remove('hidden');
+        }, 180);
+      }
+
+      function generateNewObject() {
+        objectText.style.color = '#1f2d2b';
+        objectText.textContent = 'search';
+        objectText.classList.remove('hidden');
+        objectBox.classList.remove('hidden');
+        optionsGrid.classList.add('hidden');
+        optionsGrid.innerHTML = '';
+        pickRandomIcon();
+      }
+
+      showObjectBtn.addEventListener('click', showOptions);
+      generateObjectBtn.addEventListener('click', generateNewObject);
+      generateNewObject();
+    </script>
+  </body>
+</html>

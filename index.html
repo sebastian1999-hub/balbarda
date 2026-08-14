@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juego de Preguntas Numéricas</title>
+    <style>
+      :root {
+        --bg-1: #edecdc;
+        --bg-2: #67c6bf;
+        --card: rgba(255, 255, 255, 0.85);
+        --card-border: rgba(103, 198, 191, 0.5);
+        --text: #1f2d2b;
+        --primary: #67c6bf;
+        --primary-dark: #42a7a1;
+        --secondary: #edecdc;
+        --success: #2c7a74;
+        --shadow: rgba(27, 63, 60, 0.2);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+        color: var(--text);
+      }
+
+      .topbar {
+        width: min(90vw, 760px);
+        margin-top: 26px;
+      }
+
+      .top-nav {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 999px;
+        padding: 8px;
+        display: flex;
+        gap: 8px;
+        box-shadow: 0 10px 24px rgba(27, 63, 60, 0.12);
+      }
+
+      .nav-link {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        color: var(--text);
+        font-weight: 700;
+        padding: 12px 16px;
+        border-radius: 999px;
+        transition: all 0.2s ease;
+      }
+
+      .nav-link.active {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+      }
+
+      .app {
+        width: min(90vw, 760px);
+        padding: 20px;
+      }
+
+      .game-card {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 22px;
+        padding: 28px 24px;
+        box-shadow: 0 18px 40px var(--shadow);
+      }
+
+      .label {
+        margin: 0 0 18px;
+        text-align: center;
+        font-size: 2rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--primary);
+      }
+
+      .question-box,
+      .answer-box {
+        border-radius: 18px;
+        padding: 20px 18px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.35s ease;
+      }
+
+      .question-box {
+        min-height: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: clamp(1.1rem, 2vw, 1.6rem);
+        line-height: 1.5;
+      }
+
+      .answer-box {
+        margin-top: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: rgba(126, 240, 184, 0.08);
+        border-color: rgba(126, 240, 184, 0.22);
+        color: var(--success);
+      }
+
+      .answer-box span {
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      #answerText {
+        font-size: clamp(1.3rem, 2.5vw, 2.2rem);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .actions {
+        margin-top: 22px;
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 14px 22px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.18s ease;
+      }
+
+      button:hover { transform: translateY(-1px); }
+      button:active { transform: translateY(0); }
+
+      .primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: #fff;
+      }
+
+      .secondary {
+        background: linear-gradient(135deg, var(--secondary), #d7e5e3);
+        color: #163d3a;
+      }
+
+      @media (max-width: 480px) {
+        .top-nav { gap: 6px; }
+        .nav-link { padding: 10px 12px; font-size: 0.92rem; }
+        .actions { flex-direction: column; }
+        button { width: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <nav class="top-nav" aria-label="Navegación principal">
+        <a class="nav-link active" href="index.html">Preguntas</a>
+        <a class="nav-link" href="objetos.html">Objetos</a>
+      </nav>
+    </header>
+
+    <main class="app">
+      <div class="game-card">
+        <h1 class="label">Juego balbarda</h1>
+
+        <div class="question-box">
+          <p id="questionText">Pulsa “Generar pregunta” para empezar.</p>
+        </div>
+
+        <div class="answer-box hidden" id="answerBox">
+          <span>Respuesta:</span>
+          <strong id="answerText">0</strong>
+        </div>
+
+        <div class="actions">
+          <button id="generateBtn" class="primary">Generar pregunta</button>
+          <button id="showAnswerBtn" class="secondary">Mostrar respuesta</button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function buildQuestionBank() {
+        const pools = {
+          historia: [
+            { question: '¿En qué año cayó el Imperio Romano de Occidente?', answer: 476, unit: 'año' },
+            { question: '¿En qué año terminó la Primera Guerra Mundial?', answer: 1918, unit: 'año' },
+            { question: '¿En qué año comenzó la Revolución Francesa?', answer: 1789, unit: 'año' },
+            { question: '¿En qué año cayó el Muro de Berlín?', answer: 1989, unit: 'año' },
+            { question: '¿En qué año se descubrió América?', answer: 1492, unit: 'año' },
+            { question: '¿En qué año terminó la Segunda Guerra Mundial?', answer: 1945, unit: 'año' },
+            { question: '¿En qué año se fundó Roma?', answer: 753, unit: 'año' },
+            { question: '¿En qué año se inauguró el Canal de Suez?', answer: 1869, unit: 'año' },
+            { question: '¿En qué año se celebró el primer Mundial de Fútbol?', answer: 1930, unit: 'año' },
+            { question: '¿En qué año se proclamó la Independencia de México?', answer: 1821, unit: 'año' }
+          ],
+          curiosidades: [
+            { question: '¿Cuántos continentes hay en el mundo?', answer: 7, unit: 'continentes' },
+            { question: '¿Cuántos planetas tiene el sistema solar?', answer: 8, unit: 'planetas' },
+            { question: '¿Cuántas letras tiene el alfabeto español?', answer: 27, unit: 'letras' },
+            { question: '¿Cuántas patas tiene una araña?', answer: 8, unit: 'patas' },
+            { question: '¿Cuántos jugadores forman un equipo de fútbol en el campo?', answer: 11, unit: 'jugadores' },
+            { question: '¿Cuántos lados tiene un octágono?', answer: 8, unit: 'lados' },
+            { question: '¿Cuántos países tiene Europa?', answer: 44, unit: 'países' },
+            { question: '¿Cuántos países forman la Unión Europea?', answer: 27, unit: 'países' },
+            { question: '¿Cuántos huesos tiene el cuerpo humano adulto?', answer: 206, unit: 'huesos' },
+            { question: '¿Cuántas horas tiene un día?', answer: 24, unit: 'horas' }
+          ],
+          geografia: [
+            { question: '¿Cuántos kilómetros mide la circunferencia ecuatorial de la Tierra?', answer: 40075, unit: 'km' },
+            { question: '¿Cuántos metros mide la altura del Everest?', answer: 8848, unit: 'm' },
+            { question: '¿Cuántos kilómetros de longitud tiene el río Amazonas aproximadamente?', answer: 6992, unit: 'km' },
+            { question: '¿Cuántos metros de profundidad tiene el punto más profundo del océano?', answer: 10994, unit: 'm' },
+            { question: '¿Cuántos kilómetros mide la frontera terrestre de España?', answer: 1920, unit: 'km' },
+            { question: '¿Cuántos kilómetros mide la longitud de la Gran Muralla China?', answer: 21196, unit: 'km' },
+            { question: '¿Cuántos kilómetros mide la frontera entre España y Francia?', answer: 623, unit: 'km' },
+            { question: '¿Cuántos metros de altitud tiene el monte Kilimanjaro?', answer: 5895, unit: 'm' },
+            { question: '¿Cuántos metros de altura tiene la Torre Eiffel?', answer: 330, unit: 'm' },
+            { question: '¿Cuántos millones de habitantes tiene la población mundial aproximadamente?', answer: 8000, unit: 'millones' }
+          ],
+          ciencia: [
+            { question: '¿Cuál es el número atómico del hidrógeno?', answer: 1, unit: 'unidad' },
+            { question: '¿Cuántos elementos tiene la tabla periódica actualmente?', answer: 118, unit: 'elementos' },
+            { question: '¿Cuál es la velocidad de la luz en el vacío?', answer: 299792458, unit: 'm/s' },
+            { question: '¿Cuántos cromosomas tiene un ser humano?', answer: 46, unit: 'cromosomas' },
+            { question: '¿Cuántas caras tiene un cubo?', answer: 6, unit: 'caras' },
+            { question: '¿Cuántas arestas tiene un cubo?', answer: 12, unit: 'aristas' },
+            { question: '¿Cuántas fases tiene la luna?', answer: 8, unit: 'fases' },
+            { question: '¿Cuántos lados tiene un hexágono?', answer: 6, unit: 'lados' },
+            { question: '¿Cuál es la temperatura normal del cuerpo humano en grados Celsius?', answer: 37, unit: '°C' },
+            { question: '¿Cuántos gramos tiene un kilogramo?', answer: 1000, unit: 'g' }
+          ],
+          matematicas: [
+            { question: '¿Cuánto es 12 × 15?', answer: 180, unit: 'unidades' },
+            { question: '¿Cuánto es 27 × 9?', answer: 243, unit: 'unidades' },
+            { question: '¿Cuánto es 64 ÷ 8?', answer: 8, unit: 'unidades' },
+            { question: '¿Cuánto es 18²?', answer: 324, unit: 'unidades' },
+            { question: '¿Cuánto es 13 × 13?', answer: 169, unit: 'unidades' },
+            { question: '¿Cuánto es 24 × 12?', answer: 288, unit: 'unidades' },
+            { question: '¿Cuánto es 9³?', answer: 729, unit: 'unidades' },
+            { question: '¿Cuánto es 17 × 19?', answer: 323, unit: 'unidades' },
+            { question: '¿Cuánto es 125 ÷ 5?', answer: 25, unit: 'unidades' },
+            { question: '¿Cuánto es 21 × 14?', answer: 294, unit: 'unidades' }
+          ]
+        };
+
+        const banks = [];
+        Object.values(pools).forEach(pool => {
+          pool.forEach(item => banks.push(item));
+        });
+
+        return banks;
+      }
+
+      const questions = buildQuestionBank();
+      const questionText = document.getElementById('questionText');
+      const answerText = document.getElementById('answerText');
+      const answerBox = document.getElementById('answerBox');
+      const generateBtn = document.getElementById('generateBtn');
+      const showAnswerBtn = document.getElementById('showAnswerBtn');
+      let currentQuestion = null;
+
+      function pickRandomQuestion() {
+        const randomIndex = Math.floor(Math.random() * questions.length);
+        currentQuestion = questions[randomIndex];
+        questionText.textContent = currentQuestion.question;
+        answerBox.classList.add('hidden');
+        answerText.textContent = '0';
+      }
+
+      function showAnswer() {
+        if (!currentQuestion) {
+          questionText.textContent = 'Primero genera una pregunta para poder ver la respuesta.';
+          return;
+        }
+
+        answerText.textContent = `${currentQuestion.answer.toLocaleString()} ${currentQuestion.unit}`;
+        answerBox.classList.remove('hidden');
+      }
+
+      generateBtn.addEventListener('click', pickRandomQuestion);
+      showAnswerBtn.addEventListener('click', showAnswer);
+    </script>
+  </body>
+</html>
